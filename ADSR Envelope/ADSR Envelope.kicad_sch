@@ -1,0 +1,61 @@
+(kicad_sch (version 20230121) (generator eeschema)
+
+  (uuid b2d3f53c-0715-4ca6-ba22-e0f5a16df09c)
+
+  (paper "A4")
+
+  (lib_symbols
+  )
+
+
+  (text "Top Sheet" (at 186.69 191.008 0)
+    (effects (font (size 2 2) (thickness 0.4) bold) (justify left bottom))
+    (uuid 126df092-cf46-4d04-8ccb-d28fc6d17b69)
+  )
+  (text "29/06/2024" (at 207.264 194.056 0)
+    (effects (font (size 1.25 1.25) (thickness 0.4) bold) (justify left bottom))
+    (uuid 1b139c11-3306-4ee2-8d56-620d0bc8bf33)
+  )
+  (text "2" (at 268.732 194.31 0)
+    (effects (font (size 1.25 1.25) (thickness 0.4) bold) (justify left bottom))
+    (uuid cb485747-7c63-4b6b-ad31-f841aaba5ea7)
+  )
+
+  (sheet (at 54.61 57.15) (size 68.58 67.31) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 0ac86302-6f46-436a-85f9-3129b1d77d2e)
+    (property "Sheetname" "Microcontroller" (at 54.61 56.4384 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "Microcontroller.kicad_sch" (at 54.61 125.0446 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "ADSR Envelope"
+        (path "/b2d3f53c-0715-4ca6-ba22-e0f5a16df09c" (page "2"))
+      )
+    )
+  )
+
+  (sheet (at 133.35 57.15) (size 66.04 66.04) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 0dae945f-210d-430d-8177-b403372198cd)
+    (property "Sheetname" "Analog" (at 133.35 56.4384 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "Analog.kicad_sch" (at 133.35 123.7746 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "ADSR Envelope"
+        (path "/b2d3f53c-0715-4ca6-ba22-e0f5a16df09c" (page "3"))
+      )
+    )
+  )
+
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)

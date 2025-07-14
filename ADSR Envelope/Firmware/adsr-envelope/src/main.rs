@@ -11,10 +11,20 @@ use embedded_hal::serial::Write;
 #[entry]
 fn main() -> ! {
     if let Some(p) = pac::Peripherals::take() {
+        // Create variable for flash memory access
         let mut flash = p.FLASH;
-        let mut rcc = p.RCC.configure().sysclk(48.mhz()).freeze(&mut flash);
-        let gpioa = p.GPIOA.split(&mut rcc);
 
+        // Configure clock
+        let mut rcc = p.RCC.configure().sysclk(48.mhz()).freeze(&mut flash);
+
+        // Create variable for gpioa and gpiob
+        let gpioa = p.GPIOA.split(&mut rcc);
+        let gpiob = p.GPIOB.split(&mut rcc);
+
+        // Configure PB0 as output
+        // TODO        
+
+        // Create tx and rx variables for USART1 (pins PA9 and PA10)
         let  (tx, rx) = cortex_m::interrupt::free(move |cs| {
             (
                 gpioa.pa9.into_alternate_af1(cs),
@@ -22,12 +32,17 @@ fn main() -> ! {
             )
         });
         
-        let serial = Serial::usart1(p.USART1, (tx, rx), 115_200.bps(), &mut rcc);
-        let (mut tx, _rx) = serial.split();        
+        // Create struct for serial communication (USART1)
+        let mut serial = Serial::usart1(p.USART1, (tx, rx), 115_200.bps(), &mut rcc);
+        // let (mut tx, _rx) = serial.split();      
         
         loop {
             // Send message
-            print("Sending message...\n", &mut tx);
+            print("Sending message...\n", &mut serial);
+            // TODO: Turn on LED
+            delay();     
+            print("Please wait...\n", &mut serial);
+            // TODO: Turn off LED
             delay();          
         }
     }
@@ -37,24 +52,6 @@ fn main() -> ! {
     }
 }
 
-    // let dp = stm32f0x0::Peripherals::take().unwrap();
-
-    // // Enable GPIOB clock
-    // dp.RCC.ahbenr.modify(|_, w| w.iopben().set_bit());
-
-    // // Configure PB0 as output
-    // dp.GPIOB.moder.modify(|_, w| w.moder0().bits(0b01)); // output mode
-    // dp.GPIOB.otyper.modify(|_, w| w.ot0().clear_bit());  // push-pull    
-
-    // loop {
-    //     // Toggle PB0 ON
-    //     dp.GPIOB.bsrr.write(|w| w.bs0().set_bit());
-    //     delay();
-
-    //     // Toggle PB0 OFF
-    //     dp.GPIOB.bsrr.write(|w| w.br0().set_bit());
-    //     delay();
-    // }
 fn print<T>(message: &'static str, serial: &mut T)
 where 
     T: Write<u8>,

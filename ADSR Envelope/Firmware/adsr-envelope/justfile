@@ -1,0 +1,5 @@
+set shell := ["powershell.exe", "-Command"]
+flash:
+    cargo build --release
+    rust-objcopy -O binary target/thumbv6m-none-eabi/release/stm32f030_blink stm32f030-pb9-blink.bin
+    stm32flash -w stm32f030-pb9-blink.bin -v COM5

@@ -6,7 +6,9 @@ use stm32f0xx_hal::{self as hal, gpio, pac::{usart1, USART1}, serial};
 use crate::hal::{pac, prelude::*, serial::Serial};
 use cortex_m_rt::entry;
 use nb;
-use embedded_hal::serial::Write;
+use embedded_hal::{blocking::serial::write, serial::Write};
+use core::fmt::Write as OtherWrite;
+use heapless::{self, String};
 
 #[entry]
 fn main() -> ! {
@@ -34,17 +36,36 @@ fn main() -> ! {
         
         // Create struct for serial communication (USART1)
         let mut serial = Serial::usart1(p.USART1, (tx, rx), 115_200.bps(), &mut rcc);
-        // let (mut tx, _rx) = serial.split();      
+           
         
-        loop {
-            // Send message
-            print("Sending message...\n", &mut serial);
-            // TODO: Turn on LED
-            delay();     
-            print("Please wait...\n", &mut serial);
-            // TODO: Turn off LED
-            delay();          
-        }
+        
+        // Draw one bar        
+        draw_line(5, 20, 10, 10, &mut serial);
+        draw_line(5, 20, 15, 15, &mut serial);
+        draw_line(20, 20, 11, 15, &mut serial);
+        draw_line(4, 4, 11, 15, &mut serial);
+        
+
+        /*
+
+        /---\               
+        |   |
+        |   |
+        |   |
+        |   |
+        |   |
+        |   |
+        |###|
+        |###|
+        |###|
+        \---/
+
+        ATTACK
+         30%       
+             
+        */
+        
+        
     }
 
     loop {
@@ -52,7 +73,7 @@ fn main() -> ! {
     }
 }
 
-fn print<T>(message: &'static str, serial: &mut T)
+fn print<T>(message: &str, serial: &mut T)
 where 
     T: Write<u8>,
     
@@ -63,7 +84,39 @@ where
 }
 
 fn delay() {
-    for _ in 0..1_000_000 {
+    for _ in 0..500_000 {
         cortex_m::asm::nop();
+    }
+}
+
+
+fn draw_line<T>(row_init: u32, row_final: u32, col_init: u32, col_final: u32, serial: &mut T)
+where 
+    T: Write<u8>,
+{
+    
+    if col_init == col_final {
+        // Vertical direction
+        for current_row in row_init..row_final{
+            // Print escape code            
+            let mut escape_code = String::<16>::new();
+            write!(escape_code, "\x1b[{};{}H", current_row, col_init).unwrap();            
+            print(&escape_code.as_str(), serial);            
+
+            // Print vertical line            
+            print("|", serial);
+        }      
+
+    } else if row_init == row_final {
+        // Horizontal direction        
+        for current_col in col_init..col_final{                        
+            // Print escape code            
+            let mut escape_code = String::<16>::new();
+            write!(escape_code, "\x1b[{};{}H", row_init, current_col).unwrap();            
+            print(&escape_code.as_str(), serial);            
+
+            // Print horizontal line            
+            print("-", serial);
+        }
     }
 }

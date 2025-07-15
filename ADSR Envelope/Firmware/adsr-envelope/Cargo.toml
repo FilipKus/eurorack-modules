@@ -1,5 +1,5 @@
 [package]
-name = "stm32f030_blink"
+name = "adsr-envelope"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,6 +10,7 @@ panic-halt = "0.2"
 embedded-hal = "0.2"
 stm32f0xx-hal = { version = "0.18", features = ["stm32f030x8"] }
 nb = "1.1"
+heapless = "0.8.0"
 
 [profile.release]
 opt-level = "s"

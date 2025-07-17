@@ -52,58 +52,53 @@ fn main() -> ! {
         print("\x1b[0mHardware Revision: \x1b[2mVersion 2.0\r\n", &mut serial);
         print("\x1b[0mDesigner: \x1b[2mFilip K\x1b[0m\r\n", &mut serial);
 
-        // Draw the attack, decay, release and sustain bars
-        draw_bar(5, 20, 5, 10, &mut serial);
-        draw_bar(5, 20, 20, 25, &mut serial);
-        draw_bar(5, 20, 35, 40, &mut serial);
-        draw_bar(5, 20, 50, 55, &mut serial);
+        // Create the attack, decay, release and sustain bars
+        let attack_bar = build_bar(5, 5, "ATTACK", &mut serial);
+        let decay_bar = build_bar(5, 20, "DECAY", &mut serial);
+        let sustain_bar = build_bar(5, 35, "SUSTAIN", &mut serial);
+        let release_bar = build_bar(5, 50, "RELEASE", &mut serial); 
 
-        // Add labels to bars
-        print_string_at_location("ATTACK", 5, 22, &mut serial);
-        print_string_at_location("DECAY", 20, 22, &mut serial);
-        print_string_at_location("SUSTAIN", 35, 22, &mut serial);
-        print_string_at_location("RELEASE", 50, 22, &mut serial);
-
-        // Add potentiometer levels to bars
-        print_string_at_location("30%", 6, 23, &mut serial);
-        print_string_at_location("60%", 21, 23, &mut serial);
-        print_string_at_location("10%", 36, 23, &mut serial);
-        print_string_at_location("40%", 51, 23, &mut serial);
-
-        // Add temporary bar levels
-        print("\x1b[38;5;32m", &mut serial);    // Cool blue colour
-        draw_multi_level(30, 6, 19, &mut serial); 
-        draw_multi_level(60, 21, 19, &mut serial); 
-        draw_multi_level(10, 36, 19, &mut serial); 
-        draw_multi_level(40, 51, 19, &mut serial);  
-
-        // TODO: Create class/struct for bar
-
-        /*
-
-        /---\               
-        |   |
-        |   |
-        |   |
-        |   |
-        |   |
-        |   |
-        |###|
-        |###|
-        |###|
-        \---/
-
-        ATTACK
-         30%       
-             
-        */   
-
+        // // Add temporary bar levels
+        // print("\x1b[38;5;32m", &mut serial);    // Cool blue colour
+        // draw_multi_level(30, 6, 19, &mut serial); 
+        // draw_multi_level(60, 21, 19, &mut serial); 
+        // draw_multi_level(10, 36, 19, &mut serial); 
+        // draw_multi_level(40, 51, 19, &mut serial);
         
     }
 
     loop {
         continue;
     }
+}
+
+struct Bar<'a> {
+    row_init: u32,  
+    col_init: u32,  
+    label: &'a str, 
+    level: u32,
+}
+
+fn build_bar<'a, T>(row_init: u32, col_init: u32, label: &'a str, serial: &'a mut T) -> Bar<'a>
+where
+    T: Write<u8>,
+{
+    let mut bar_output = Bar {
+        row_init: row_init,
+        col_init: col_init, 
+        label: label, 
+        level: 0,
+    };
+
+    let row_final: u32 = row_init + 15;
+    let col_final: u32 = col_init + 5;
+
+    draw_bar(row_init, row_final, col_init, col_final, serial);
+    print_string_at_location(label, col_init, row_final+2, serial);
+    print_u32_at_location(bar_output.level, col_init+1, row_final+3, serial);
+    print("%", serial); 
+
+    return bar_output;
 }
 
 fn print<T>(message: &str, serial: &mut T)

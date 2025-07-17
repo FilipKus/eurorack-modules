@@ -153,26 +153,14 @@ where
     
     if col_init == col_final {
         // Vertical direction
-        for current_row in row_init..row_final+1{
-            // Print escape code            
-            let mut escape_code = String::<16>::new();
-            write!(escape_code, "\x1b[{};{}H", current_row, col_init).unwrap();            
-            print(&escape_code.as_str(), serial);            
-
-            // Print vertical line            
-            print("|", serial);
+        for current_row in row_init..row_final+1{            
+            print_string_at_location("|", col_init, current_row, serial);
         }      
 
     } else if row_init == row_final {
         // Horizontal direction        
         for current_col in col_init..col_final+1{                        
-            // Print escape code            
-            let mut escape_code = String::<16>::new();
-            write!(escape_code, "\x1b[{};{}H", row_init, current_col).unwrap();            
-            print(&escape_code.as_str(), serial);            
-
-            // Print horizontal line            
-            print("-", serial);
+            print_string_at_location("-", current_col, row_init, serial);
         }
     }
 }
@@ -181,7 +169,6 @@ fn draw_bar<T>(row_init: u32, row_final: u32, col_init: u32, col_final: u32, ser
 where 
     T: Write<u8>,
 {
-
 
     // Draw vertical lines
     draw_line(row_init+1, row_final-1, col_init, col_init, serial);
@@ -192,21 +179,10 @@ where
     draw_line(row_final, row_final, col_init+1, col_final-1, serial);
 
     // Draw corners
-    let mut escape_code = String::<16>::new();
-    write!(escape_code, "\x1b[{};{}H/", row_init, col_init).unwrap();            
-    print(&escape_code.as_str(), serial);
-
-    let mut escape_code = String::<16>::new();
-    write!(escape_code, "\x1b[{};{}H/", row_final, col_final).unwrap();            
-    print(&escape_code.as_str(), serial); 
-
-    let mut escape_code = String::<16>::new();
-    write!(escape_code, "\x1b[{};{}H\\", row_init, col_final).unwrap();            
-    print(&escape_code.as_str(), serial); 
-
-    let mut escape_code = String::<16>::new();
-    write!(escape_code, "\x1b[{};{}H\\", row_final, col_init).unwrap();            
-    print(&escape_code.as_str(), serial);      
+    print_string_at_location("/", col_init, row_init, serial);
+    print_string_at_location("/", col_final, row_final, serial);
+    print_string_at_location("\\", col_final, row_init, serial);
+    print_string_at_location("\\", col_init, row_final, serial);  
 
 }
 
